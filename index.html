@@ -423,7 +423,7 @@
 
   let loadValue = 0;
   const loadInterval = setInterval(() => {
-    loadValue += Math.floor(Math.random() * 6) + 2;
+    loadValue += Math.floor(Math.random() * 8) + 2;
     if (loadValue > 100) loadValue = 100;
 
     loadingFill.style.width = loadValue + "%";
