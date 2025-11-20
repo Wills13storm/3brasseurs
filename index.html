@@ -427,7 +427,7 @@
 
   let loadValue = 0;
   const loadInterval = setInterval(() => {
-    loadValue += Math.floor(Math.random() * 12) + 4;
+    loadValue += Math.floor(Math.random() * 6) + 2;
     if (loadValue > 100) loadValue = 100;
 
     loadingFill.style.width = loadValue + "%";
@@ -445,7 +445,7 @@
         }, 650);
       }, 400);
     }
-  }, 2000); // vitesse de la barre
+  }, 1000); // vitesse de la barre
 
   /* Typewriter */
   const storyTopEl = document.getElementById("story-top");
