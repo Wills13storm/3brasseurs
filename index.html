@@ -75,7 +75,7 @@
 
     .loading-inner {
       text-align: center;
-      max-width: 420px;
+      max-width: 520px; /* un peu plus large pour ton affiche */
       padding: 32px 24px;
       border-radius: 18px;
       border: 1px solid rgba(199, 188, 163, 0.5);
@@ -350,7 +350,7 @@
 
     <div class="loading-main">
       Préparation de <span>l'Évènement</span>…<br>
-      Mise en place de la mission.
+      Mise en place de la mission " Une page se tourne, un nouveau chapitre s'ouvre".
     </div>
 
     <div class="loading-bar">
@@ -359,7 +359,7 @@
 
     <div id="loading-percent">0%</div>
 
-    <div class="loading-hint">Saviez-vous que la meilleure idée cadeau… se trouve souvent au fond d’une pinte ? 🍺</div>
+    <div class="loading-hint">Le gras c'est la vie non ? 🍺</div>
   </div>
 </div>
 
@@ -394,7 +394,128 @@
       <div class="mission-panel" id="mission-panel" style="display:none;">
         <div class="mission-title">PARAMÈTRES DE LA MISSION</div>
         <ul class="mission-list">
-          <li><span class="mission-bullet">▸</span> Apporter un cadeau d’environ <strong>10 €</strong></li>
+          <li><span class="mission-bullet">▸</span> Apporter votre bonne humeur</li>
           <li><span class="mission-bullet">▸</span> Aucun thème imposé</li>
-          <li><span class="mission-bullet">▸</span> Un cadeau qui “mérite une bière pour s’en remettre” 🍺</li>
-          <li><span class="mission-bullet">▸</span> Et qui pourrait suscit
+          <li><span class="mission-bullet">▸</span> Un apéritif est permis 🍺</li>
+          <li><span class="mission-bullet">▸</span> Jeudi tout est permis... Euh non c'est vendredi mais c'est pas grave</li>
+        </ul>
+      </div>
+
+      <div class="tagline" id="tagline" style="display:none;">
+        Une soirée où chaque cadeau devient une dégustation… et chaque choix, un pari.
+      </div>
+
+      <div class="footer" id="footer" style="display:none;">
+        <div class="footer-main">LES 3 BRASSEURS</div>
+        <div class="footer-sub">BRASSER · PARTAGER · JOUER</div>
+      </div>
+
+      <div class="controls">
+        <button class="btn-skip" id="skip-btn">AFFICHER TOUT</button>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<script>
+  /* Loading animation */
+  const loadingScreen = document.getElementById("loading-screen");
+  const loadingFill = document.getElementById("loading-fill");
+  const loadingPercent = document.getElementById("loading-percent");
+  const shell = document.getElementById("shell");
+
+  let loadValue = 0;
+  const loadInterval = setInterval(() => {
+    loadValue += Math.floor(Math.random() * 12) + 4;
+    if (loadValue > 100) loadValue = 100;
+
+    loadingFill.style.width = loadValue + "%";
+    loadingPercent.textContent = loadValue + "%";
+
+    if (loadValue >= 100) {
+      clearInterval(loadInterval);
+      setTimeout(() => {
+        loadingScreen.style.opacity = "0";
+        loadingScreen.style.transition = "opacity 0.6s ease-out";
+        setTimeout(() => {
+          loadingScreen.style.display = "none";
+          shell.classList.add("visible");
+          startTypewriter();
+        }, 650);
+      }, 400);
+    }
+  }, 300); // vitesse de la barre
+
+  /* Typewriter */
+  const storyTopEl = document.getElementById("story-top");
+  const storyBottomEl = document.getElementById("story-bottom");
+  const midImageContainer = document.getElementById("mid-image-container");
+  const cursorEl = document.getElementById("cursor");
+  const missionPanel = document.getElementById("mission-panel");
+  const taglineEl = document.getElementById("tagline");
+  const footerEl = document.getElementById("footer");
+  const skipBtn = document.getElementById("skip-btn");
+
+  const storyText =
+`> REPAS BIEN GRAS EN VUE
+> SESSION : 3_BRASSEURS
+> ÉTAT : ACTIVÉ
+
+Hello tout le monde.
+
+Il est venu le temps de fêter mon départ, pour votre plus grand plaisir je pense :P
+
+Les votes ont tranché, je vous proposer une petite virée aux 3 brasseurs le jeudi 27/11 à 12h00.
+
+Il fait froid, aucune excuse pour ne pas manger gras !!!!!
+
+PS : Je remercie François pour le support et les idées. #copyright sans demander #pas original`;
+
+  // Index où commence la partie "Bienvenue à vous."
+  const splitIndex = storyText.indexOf("Bienvenue à vous.");
+
+  let charIndex = 0;
+  let typeInterval = null;
+
+  function startTypewriter() {
+    typeInterval = setInterval(() => {
+      if (charIndex < storyText.length) {
+        const currentChar = storyText.charAt(charIndex);
+
+        if (charIndex < splitIndex) {
+          // Première partie (texte "technique")
+          storyTopEl.textContent += currentChar;
+        } else {
+          // Au moment précis où commence "Bienvenue à vous.", on affiche l'image
+          if (charIndex === splitIndex) {
+            midImageContainer.style.display = "block";
+          }
+          storyBottomEl.textContent += currentChar;
+        }
+
+        charIndex++;
+      } else {
+        clearInterval(typeInterval);
+        cursorEl.style.display = "none";
+        missionPanel.style.display = "block";
+        setTimeout(() => taglineEl.style.display = "block", 300);
+        setTimeout(() => footerEl.style.display = "block", 600);
+      }
+    }, 26);
+  }
+
+  skipBtn.addEventListener("click", () => {
+    clearInterval(typeInterval);
+    storyTopEl.textContent = storyText.slice(0, splitIndex);
+    storyBottomEl.textContent = storyText.slice(splitIndex);
+    midImageContainer.style.display = "block";
+    cursorEl.style.display = "none";
+    missionPanel.style.display = "block";
+    taglineEl.style.display = "block";
+    footerEl.style.display = "block";
+  });
+</script>
+
+</body>
+</html>
