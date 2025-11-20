@@ -89,6 +89,15 @@
       overflow: hidden;
     }
 
+    /* Image WANTED dans le loader */
+    .loading-wanted img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 18px;
+      border-radius: 10px;
+    }
+
     .loading-title {
       font-family: var(--mono);
       font-size: 0.85rem;
@@ -250,14 +259,14 @@
       50%, 100% { opacity: 0; }
     }
 
-    /* Image au milieu de l'histoire */
+    /* Image au milieu de l'histoire (3 Brasseurs) */
     .mid-image-container {
       text-align: center;
       margin: 24px 0 18px;
     }
 
     .mid-image-container img {
-      max-width: 70%;
+      max-width: 40%;
       height: auto;
       border-radius: 12px;
       box-shadow: 0 0 28px rgba(0, 0, 0, 0.7);
@@ -333,6 +342,9 @@
 <!-- LOADING SCREEN -->
 <div class="loading-screen" id="loading-screen">
   <div class="loading-inner">
+    <div class="loading-wanted">
+      <img src="img/wanted.png" alt="Wanted Williams">
+    </div>
     <div class="loading-title">BRASSAGE EN COURS</div>
     <div class="loading-logo">LES 3 BRASSEURS – SESSION SPÉCIALE</div>
 
@@ -372,14 +384,11 @@
       <div class="story">
         <span id="story-top"></span>
 
-        <!-- Image qui apparaît entre la partie "technique" et "Bienvenue à vous." -->
         <div id="mid-image-container" class="mid-image-container" style="display:none;">
-          <!-- Change le src si tu veux une autre image -->
           <img src="img/3brasseurs.png" alt="Les 3 Brasseurs">
         </div>
 
-        <span id="story-bottom"></span>
-        <span id="cursor" class="cursor"></span>
+        <span id="story-bottom"></span><span id="cursor" class="cursor"></span>
       </div>
 
       <div class="mission-panel" id="mission-panel" style="display:none;">
@@ -388,128 +397,4 @@
           <li><span class="mission-bullet">▸</span> Apporter un cadeau d’environ <strong>10 €</strong></li>
           <li><span class="mission-bullet">▸</span> Aucun thème imposé</li>
           <li><span class="mission-bullet">▸</span> Un cadeau qui “mérite une bière pour s’en remettre” 🍺</li>
-          <li><span class="mission-bullet">▸</span> Et qui pourrait susciter… une *petite rivalité brassicole*</li>
-        </ul>
-      </div>
-
-      <div class="tagline" id="tagline" style="display:none;">
-        Une soirée où chaque cadeau devient une dégustation… et chaque choix, un pari.
-      </div>
-
-      <div class="footer" id="footer" style="display:none;">
-        <div class="footer-main">LES 3 BRASSEURS</div>
-        <div class="footer-sub">BRASSER · PARTAGER · JOUER</div>
-      </div>
-
-      <div class="controls">
-        <button class="btn-skip" id="skip-btn">AFFICHER TOUT</button>
-      </div>
-
-    </div>
-  </section>
-</main>
-
-<script>
-  /* Loading animation */
-  const loadingScreen = document.getElementById("loading-screen");
-  const loadingFill = document.getElementById("loading-fill");
-  const loadingPercent = document.getElementById("loading-percent");
-  const shell = document.getElementById("shell");
-
-  let loadValue = 0;
-  const loadInterval = setInterval(() => {
-    loadValue += Math.floor(Math.random() * 12) + 4;
-    if (loadValue > 100) loadValue = 100;
-
-    loadingFill.style.width = loadValue + "%";
-    loadingPercent.textContent = loadValue + "%";
-
-    if (loadValue >= 100) {
-      clearInterval(loadInterval);
-      setTimeout(() => {
-        loadingScreen.style.opacity = "0";
-        loadingScreen.style.transition = "opacity 0.6s ease-out";
-        setTimeout(() => {
-          loadingScreen.style.display = "none";
-          shell.classList.add("visible");
-          startTypewriter();
-        }, 650);
-      }, 400);
-    }
-  }, 300); // <- tu peux ajuster ici la vitesse globale du chargement
-
-  /* Typewriter */
-  const storyTopEl = document.getElementById("story-top");
-  const storyBottomEl = document.getElementById("story-bottom");
-  const midImageContainer = document.getElementById("mid-image-container");
-  const cursorEl = document.getElementById("cursor");
-  const missionPanel = document.getElementById("mission-panel");
-  const taglineEl = document.getElementById("tagline");
-  const footerEl = document.getElementById("footer");
-  const skipBtn = document.getElementById("skip-btn");
-
-  const storyText =
-`> BRASSAGE INITIALISÉ
-> SESSION : 3_BRASSEURS_EVENT
-> ÉTAT : ACTIVÉ
-
-Bienvenue à vous.
-
-Ce soir, la brasserie ne sert pas seulement des bières.
-Elle ouvre une nouvelle tradition.
-
-Un jeu.
-Un rituel.
-Une expérience pensée pour mettre l'ambiance autour de la table.
-
-Préparez-vous.
-
-Car avant de trinquer... il faudra jouer.`;
-
-  // On veut que l'image apparaisse juste avant "Bienvenue à vous."
-  const splitIndex = storyText.indexOf("Bienvenue à vous.");
-  let charIndex = 0;
-  let typeInterval = null;
-
-  function startTypewriter() {
-    typeInterval = setInterval(() => {
-      if (charIndex < storyText.length) {
-        const currentChar = storyText.charAt(charIndex);
-
-        if (charIndex < splitIndex) {
-          // Première partie (technique)
-          storyTopEl.textContent += currentChar;
-        } else {
-          // On révèle l'image au moment où commence "Bienvenue à vous."
-          if (charIndex === splitIndex) {
-            midImageContainer.style.display = "block";
-          }
-          storyBottomEl.textContent += currentChar;
-        }
-
-        charIndex++;
-      } else {
-        clearInterval(typeInterval);
-        cursorEl.style.display = "none";
-        missionPanel.style.display = "block";
-        setTimeout(() => taglineEl.style.display = "block", 300);
-        setTimeout(() => footerEl.style.display = "block", 600);
-      }
-    }, 26);
-  }
-
-  skipBtn.addEventListener("click", () => {
-    clearInterval(typeInterval);
-    // On remplit directement les deux parties + l'image
-    storyTopEl.textContent = storyText.slice(0, splitIndex);
-    storyBottomEl.textContent = storyText.slice(splitIndex);
-    midImageContainer.style.display = "block";
-    cursorEl.style.display = "none";
-    missionPanel.style.display = "block";
-    taglineEl.style.display = "block";
-    footerEl.style.display = "block";
-  });
-</script>
-
-</body>
-</html>
+          <li><span class="mission-bullet">▸</span> Et qui pourrait suscit
