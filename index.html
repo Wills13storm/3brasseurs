@@ -7,23 +7,18 @@
 
   <style>
     :root {
-      /* Palette inspirée des 3 Brasseurs */
-      --bg: #1a1f16;                /* Vert bouteille très sombre */
-      --bg-alt: #141912;           
+      --bg: #1a1f16;
+      --bg-alt: #141912;
       --panel: #262b21;
       --panel-soft: #2e3428;
-      --primary: #c9a86a;           /* Doré bière / malt */
+      --primary: #c9a86a;
       --primary-soft: rgba(201, 168, 106, 0.35);
-      --accent: #9a2e2f;            /* Rouge vintage brasserie */
+      --accent: #9a2e2f;
       --accent-soft: rgba(154, 46, 47, 0.25);
-      --text: #f3e9d2;              /* Beige clair */
+      --text: #f3e9d2;
       --muted: #c7bca3;
       --mono: "JetBrains Mono", monospace;
       --sans: system-ui, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
     }
 
     body {
@@ -35,7 +30,7 @@
       overflow-x: hidden;
     }
 
-    /* Effet scanline atténué */
+    /* Scanline */
     body::before {
       content: "";
       position: fixed;
@@ -53,10 +48,9 @@
       z-index: 5;
     }
 
-    /* Soft glitch très subtil */
     @keyframes soft-glitch {
-      0%, 100% { transform: translateY(0); filter: none; }
-      50% { transform: translateY(-1px) brightness(1.02); }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-1px); }
     }
 
     /* LOADING SCREEN */
@@ -69,13 +63,12 @@
       align-items: center;
       justify-content: center;
       z-index: 20;
-      color: var(--text);
       animation: soft-glitch 6s infinite ease-in-out alternate;
     }
 
     .loading-inner {
       text-align: center;
-      max-width: 600px;
+      max-width: 500px; /* élargi */
       padding: 32px 24px;
       border-radius: 18px;
       border: 1px solid rgba(199, 188, 163, 0.5);
@@ -85,15 +78,21 @@
       box-shadow:
         0 0 30px rgba(26, 31, 22, 0.9),
         0 0 50px rgba(201, 168, 106, 0.25);
-      position: relative;
-      overflow: hidden;
+    }
+
+    /* IMAGE WANTED – REDIMENSIONNÉE */
+    .loading-inner img {
+      max-width: 85%;   /* image réduite proprement */
+      height: auto;
+      display: block;
+      margin: 0 auto 20px auto;
+      border-radius: 6px;
     }
 
     .loading-title {
       font-family: var(--mono);
       font-size: 0.85rem;
       letter-spacing: 0.25em;
-      text-transform: uppercase;
       color: var(--muted);
       margin-bottom: 16px;
     }
@@ -102,14 +101,8 @@
       font-family: var(--mono);
       font-size: 0.75rem;
       letter-spacing: 0.22em;
-      text-transform: uppercase;
       color: var(--primary);
       margin-bottom: 22px;
-    }
-
-    .loading-main span {
-      color: var(--primary);
-      font-weight: bold;
     }
 
     .loading-bar {
@@ -117,221 +110,43 @@
       height: 7px;
       border-radius: 999px;
       background: rgba(26, 31, 22, 0.8);
-      overflow: hidden;
       border: 1px solid rgba(199, 188, 163, 0.4);
       margin-bottom: 10px;
+      overflow: hidden;
     }
 
     .loading-bar-fill {
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, var(--primary), #d8b470, #c89a3c);
-      box-shadow: 0 0 18px rgba(201, 168, 106, 0.7);
       transition: width 0.15s linear;
     }
 
-    .loading-hint {
-      margin-top: 18px;
-      font-size: 0.78rem;
-      color: var(--muted);
-      font-style: italic;
-    }
-
-    /* MAIN CONTENT */
+    /* MAIN */
     .shell {
-      position: relative;
-      max-width: 880px;
-      margin: 72px auto 56px;
-      padding: 0 20px 72px;
-      display: flex;
-      justify-content: center;
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+      max-width: 880px;
+      margin: 72px auto;
+      padding: 0 20px 72px;
     }
 
     .shell.visible {
       opacity: 1;
       transform: translateY(0);
     }
-
-    .panel {
-      width: 100%;
-      border-radius: 18px;
-      border: 1px solid rgba(199, 188, 163, 0.5);
-      background:
-        radial-gradient(circle at top left, rgba(26, 31, 22, 0.97), rgba(26, 31, 22, 1)),
-        linear-gradient(145deg, rgba(26, 31, 22, 1), rgba(26, 31, 22, 0.9));
-      box-shadow:
-        0 0 40px rgba(26, 31, 22, 1),
-        0 24px 80px rgba(0, 0, 0, 0.9);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .panel-inner {
-      padding: 26px 24px 24px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hud-header {
-      display: flex;
-      justify-content: space-between;
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      letter-spacing: 0.18em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .hud-pill {
-      padding: 4px 9px;
-      border-radius: 999px;
-      border: 1px solid rgba(199, 188, 163, 0.6);
-      background: rgba(26, 31, 22, 0.86);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .hud-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #c9a86a, #9a844e);
-      animation: pulse 2.5s infinite ease-in-out;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.15); opacity: 1; }
-    }
-
-    .title-main {
-      text-align: center;
-      font-family: var(--mono);
-      font-size: 1rem;
-      letter-spacing: 0.25em;
-      color: var(--primary);
-    }
-
-    .title-sub {
-      text-align: center;
-      color: var(--muted);
-      margin-top: 6px;
-    }
-
-    .separator {
-      width: 100%;
-      height: 1px;
-      margin: 20px 0;
-      background: linear-gradient(to right, transparent, var(--primary), transparent);
-      opacity: 0.6;
-    }
-
-    .story {
-      font-size: 1rem;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      min-height: 150px;
-    }
-
-    .cursor {
-      display: inline-block;
-      width: 8px;
-      height: 1.1em;
-      background: var(--primary);
-      animation: blink 1s steps(2, start) infinite;
-    }
-
-    @keyframes blink {
-      0%, 49% { opacity: 1; }
-      50%, 100% { opacity: 0; }
-    }
-
-    .mission-panel {
-      margin-top: 22px;
-      padding: 15px 14px 12px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(26, 31, 22, 0.95), rgba(26, 31, 22, 0.98));
-      border: 1px solid var(--primary-soft);
-      box-shadow: 0 0 24px rgba(201, 168, 106, 0.22);
-    }
-
-    .mission-title {
-      font-family: var(--mono);
-      font-size: 0.78rem;
-      letter-spacing: 0.22em;
-      color: var(--primary);
-      margin-bottom: 8px;
-    }
-
-    .mission-bullet {
-      color: var(--accent);
-    }
-
-    .tagline {
-      margin-top: 10px;
-      font-style: italic;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .footer {
-      margin-top: 20px;
-      text-align: center;
-      font-family: var(--mono);
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-
-    .footer-main {
-      color: var(--primary);
-      margin-bottom: 4px;
-    }
-
-    .controls {
-      margin-top: 16px;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .btn-skip {
-      font-family: var(--mono);
-      font-size: 0.76rem;
-      color: var(--muted);
-      background: transparent;
-      border-radius: 999px;
-      border: 1px solid rgba(199, 188, 163, 0.6);
-      padding: 6px 14px;
-      cursor: pointer;
-    }
-
-    .btn-skip:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-      box-shadow: 0 0 12px rgba(201, 168, 106, 0.5);
-    }
-
-    .loading-inner img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  border-radius: 8px; /* Optionnel */
-}
   </style>
 </head>
+
 <body>
 
 <!-- LOADING SCREEN -->
 <div class="loading-screen" id="loading-screen">
   <div class="loading-inner">
-    <div class="loading-logo">
-      <!-- Insertion image wanted -->
-      <img src="img/wanted.png" alt="Logo wanted">
-      </div>
+    
+    <img src="img/wanted.png" alt="Wanted Williams">
+
     <div class="loading-title">BRASSAGE EN COURS</div>
     <div class="loading-logo">LES 3 BRASSEURS – SESSION SPÉCIALE</div>
 
@@ -346,7 +161,9 @@
 
     <div id="loading-percent">0%</div>
 
-    <div class="loading-hint">Saviez-vous que la meilleure idée cadeau… se trouve souvent au fond d’une pinte ? 🍺</div>
+    <div class="loading-hint">
+      Saviez-vous que la meilleure idée cadeau… se trouve souvent au fond d’une pinte ? 🍺
+    </div>
   </div>
 </div>
 
@@ -355,44 +172,8 @@
   <section class="panel">
     <div class="panel-inner">
 
-      <header class="hud-header">
-        <div class="hud-pill">
-          <span class="hud-dot"></span>
-          <span>SESSION ÉVÈNEMENT • 3 BRASSEURS</span>
-        </div>
-        <div>ÉDITION 2025</div>
-      </header>
-
-      <div class="title-main">LES 3 BRASSEURS</div>
-      <div class="title-sub">ÉVÈNEMENT SPÉCIAL – MISSION D’OUVERTURE</div>
-
-      <div class="separator"></div>
-
       <div class="story">
         <span id="story-text"></span><span id="cursor" class="cursor"></span>
-      </div>
-
-      <div class="mission-panel" id="mission-panel" style="display:none;">
-        <div class="mission-title">PARAMÈTRES DE LA MISSION</div>
-        <ul class="mission-list">
-          <li><span class="mission-bullet">▸</span> Apporter un cadeau d’environ <strong>10 €</strong></li>
-          <li><span class="mission-bullet">▸</span> Aucun thème imposé</li>
-          <li><span class="mission-bullet">▸</span> Un cadeau qui “mérite une bière pour s’en remettre” 🍺</li>
-          <li><span class="mission-bullet">▸</span> Et qui pourrait susciter… une *petite rivalité brassicole*</li>
-        </ul>
-      </div>
-
-      <div class="tagline" id="tagline" style="display:none;">
-        Une soirée où chaque cadeau devient une dégustation… et chaque choix, un pari.
-      </div>
-
-      <div class="footer" id="footer" style="display:none;">
-        <div class="footer-main">LES 3 BRASSEURS</div>
-        <div class="footer-sub">BRASSER · PARTAGER · JOUER</div>
-      </div>
-
-      <div class="controls">
-        <button class="btn-skip" id="skip-btn">AFFICHER TOUT</button>
       </div>
 
     </div>
@@ -400,7 +181,7 @@
 </main>
 
 <script>
-  /* Loading animation */
+  /* LOADING */
   const loadingScreen = document.getElementById("loading-screen");
   const loadingFill = document.getElementById("loading-fill");
   const loadingPercent = document.getElementById("loading-percent");
@@ -418,68 +199,14 @@
       clearInterval(loadInterval);
       setTimeout(() => {
         loadingScreen.style.opacity = "0";
-        loadingScreen.style.transition = "opacity 0.6s ease-out";
+        loadingScreen.style.transition = "opacity 0.6s";
         setTimeout(() => {
           loadingScreen.style.display = "none";
           shell.classList.add("visible");
-          startTypewriter();
-        }, 650);
-      }, 400);
+        }, 600);
+      }, 300);
     }
   }, 180);
-
-  /* Typewriter */
-  const storyEl = document.getElementById("story-text");
-  const cursorEl = document.getElementById("cursor");
-  const missionPanel = document.getElementById("mission-panel");
-  const taglineEl = document.getElementById("tagline");
-  const footerEl = document.getElementById("footer");
-  const skipBtn = document.getElementById("skip-btn");
-
-  const storyText =`
-> BRASSAGE INITIALISÉ
-> SESSION : 3_BRASSEURS_EVENT
-> ÉTAT : ACTIVÉ
-
-Hello Hello.
-
-Ce soir, la brasserie ne sert pas seulement des bières.
-Elle ouvre une nouvelle tradition.
-
-Un jeu.
-Un rituel.
-Une expérience pensée pour mettre l'ambiance autour de la table.
-
-Préparez-vous.
-
-Car avant de trinquer... il faudra jouer.`
-
-  let charIndex = 0;
-  let typeInterval = null;
-
-  function startTypewriter() {
-    typeInterval = setInterval(() => {
-      if (charIndex < storyText.length) {
-        storyEl.textContent += storyText.charAt(charIndex);
-        charIndex++;
-      } else {
-        clearInterval(typeInterval);
-        cursorEl.style.display = "none";
-        missionPanel.style.display = "block";
-        setTimeout(() => taglineEl.style.display = "block", 300);
-        setTimeout(() => footerEl.style.display = "block", 600);
-      }
-    }, 26);
-  }
-
-  skipBtn.addEventListener("click", () => {
-    clearInterval(typeInterval);
-    storyEl.textContent = storyText;
-    cursorEl.style.display = "none";
-    missionPanel.style.display = "block";
-    taglineEl.style.display = "block";
-    footerEl.style.display = "block";
-  });
 </script>
 
 </body>
